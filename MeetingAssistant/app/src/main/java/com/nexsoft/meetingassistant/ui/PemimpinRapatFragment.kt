@@ -1,0 +1,247 @@
+package com.nexsoft.meetingassistant.ui
+
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.nexsoft.meetingassistant.R
+import com.nexsoft.meetingassistant.adapters.PemimpinRapatAdapter
+import com.nexsoft.meetingassistant.api.ApiClient
+import com.nexsoft.meetingassistant.databinding.FragmentPemimpinRapatBinding
+import com.nexsoft.meetingassistant.models.PemimpinRapat
+import com.nexsoft.meetingassistant.utils.SessionManager
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+class PemimpinRapatFragment : Fragment() {
+
+    private var _binding: FragmentPemimpinRapatBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var adapter: PemimpinRapatAdapter
+    private var allPemimpinRapat: List<PemimpinRapat> = emptyList()
+
+    private lateinit var sessionManager: SessionManager
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentPemimpinRapatBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        sessionManager = SessionManager(requireContext())
+
+        adapter = PemimpinRapatAdapter(
+            onEdit = { pr -> showEditDialog(pr) },
+            onDelete = { pr -> showDeleteConfirmation(pr) }
+        )
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
+
+        binding.btnTambah.setOnClickListener { showAddDialog() }
+
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterData(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        loadData()
+    }
+
+    private fun loadData() {
+        ApiClient.apiService.getAllPemimpinRapat().enqueue(object : Callback<List<PemimpinRapat>> {
+            override fun onResponse(call: Call<List<PemimpinRapat>>, response: Response<List<PemimpinRapat>>) {
+                if (response.isSuccessful) {
+                    allPemimpinRapat = response.body() ?: emptyList()
+                    adapter.updateData(allPemimpinRapat)
+                } else {
+                    Toast.makeText(requireContext(), "Gagal memuat data pemimpin rapat", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<PemimpinRapat>>, t: Throwable) {
+                Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun filterData(query: String) {
+        val filtered = allPemimpinRapat.filter {
+            it.name.contains(query, ignoreCase = true) ||
+            it.username.contains(query, ignoreCase = true)
+        }
+        adapter.updateData(filtered)
+    }
+
+    private fun showAddDialog() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_pemimpin_rapat, null)
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val etUsername = dialogView.findViewById<EditText>(R.id.etUsername)
+        val etPassword = dialogView.findViewById<EditText>(R.id.etPassword)
+        val etNama = dialogView.findViewById<EditText>(R.id.etNama)
+        val btnBatal = dialogView.findViewById<Button>(R.id.btnBatal)
+        val btnTambah = dialogView.findViewById<Button>(R.id.btnTambah)
+
+        btnBatal.setOnClickListener { dialog.dismiss() }
+
+        btnTambah.setOnClickListener {
+            val username = etUsername.text.toString().trim()
+            val password = etPassword.text.toString().trim()
+            val nama = etNama.text.toString().trim()
+
+            if (username.isEmpty() || password.isEmpty() || nama.isEmpty()) {
+                Toast.makeText(requireContext(), "Semua field harus diisi", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val pr = PemimpinRapat(username = username, password = password, name = nama)
+            ApiClient.apiService.createPemimpinRapat(pr).enqueue(object : Callback<PemimpinRapat> {
+                override fun onResponse(call: Call<PemimpinRapat>, response: Response<PemimpinRapat>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(requireContext(), "Pemimpin Rapat berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                        loadData()
+                    } else {
+                        Toast.makeText(requireContext(), "Gagal menambahkan pemimpin rapat", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<PemimpinRapat>, t: Throwable) {
+                    Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+
+        dialog.show()
+    }
+
+    private fun showEditDialog(pr: PemimpinRapat) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_pemimpin_rapat, null)
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
+        val etUsername = dialogView.findViewById<EditText>(R.id.etUsername)
+        val etPassword = dialogView.findViewById<EditText>(R.id.etPassword)
+        val etNama = dialogView.findViewById<EditText>(R.id.etNama)
+        val btnBatal = dialogView.findViewById<Button>(R.id.btnBatal)
+        val btnTambah = dialogView.findViewById<Button>(R.id.btnTambah)
+
+        tvTitle.text = "Edit Pemimpin Rapat"
+        btnTambah.text = "Simpan"
+        etUsername.setText(pr.username)
+        etNama.setText(pr.name)
+        etPassword.hint = "Kosongkan jika tidak diubah"
+
+        btnBatal.setOnClickListener { dialog.dismiss() }
+
+        btnTambah.setOnClickListener {
+            val username = etUsername.text.toString().trim()
+            val password = etPassword.text.toString().trim()
+            val nama = etNama.text.toString().trim()
+
+            if (username.isEmpty() || nama.isEmpty()) {
+                Toast.makeText(requireContext(), "Username dan Nama harus diisi", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val updatedPr = PemimpinRapat(
+                prId = pr.prId,
+                username = username,
+                password = if (password.isNotEmpty()) password else null,
+                name = nama
+            )
+
+            ApiClient.apiService.updatePemimpinRapat(pr.prId!!, updatedPr).enqueue(object : Callback<PemimpinRapat> {
+                override fun onResponse(call: Call<PemimpinRapat>, response: Response<PemimpinRapat>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(requireContext(), "Pemimpin Rapat berhasil diperbarui", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                        loadData()
+                    } else {
+                        Toast.makeText(requireContext(), "Gagal memperbarui pemimpin rapat", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<PemimpinRapat>, t: Throwable) {
+                    Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+
+        dialog.show()
+    }
+
+    private fun showDeleteConfirmation(pr: PemimpinRapat) {
+        if (sessionManager.getRole() == com.nexsoft.meetingassistant.utils.Constants.ROLE_PEMIMPIN_RAPAT && sessionManager.getUserId() == pr.prId) {
+            Toast.makeText(requireContext(), "Anda tidak dapat menghapus akun Anda sendiri", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Konfirmasi")
+            .setMessage("Yakin ingin menghapus data ini?")
+            .setPositiveButton("Hapus") { _, _ ->
+                ApiClient.apiService.deletePemimpinRapat(pr.prId!!).enqueue(object : Callback<Map<String, String>> {
+                    override fun onResponse(call: Call<Map<String, String>>, response: Response<Map<String, String>>) {
+                        if (response.isSuccessful) {
+                            Toast.makeText(requireContext(), "Pemimpin Rapat berhasil dihapus", Toast.LENGTH_SHORT).show()
+                            loadData()
+                        } else {
+                            val errorMsg = parseErrorDetail(response.errorBody()?.string())
+                            Toast.makeText(requireContext(), errorMsg ?: "Gagal menghapus pemimpin rapat", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Map<String, String>>, t: Throwable) {
+                        Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+
+    private fun parseErrorDetail(jsonString: String?): String? {
+        if (jsonString.isNullOrEmpty()) return null
+        return try {
+            org.json.JSONObject(jsonString).optString("detail", null)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}

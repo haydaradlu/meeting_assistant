@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Selected state (Darker grey rounded card like reference design) -->
+    <item android:state_checked="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#A5A5A5" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+    <!-- Pressed state -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#B8B8B8" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+    <!-- Unselected state (Light rounded card) -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#EAEAEA" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+</selector>

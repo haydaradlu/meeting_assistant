@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/menu_group_pr" android:checkableBehavior="single">
+        <item android:id="@+id/nav_pemimpin_rapat" android:title="@string/menu_pemimpin_rapat" android:icon="@drawable/ic_person" />
+        <item android:id="@+id/nav_notulis" android:title="@string/menu_notulis" android:icon="@drawable/ic_edit_note" />
+        <item android:id="@+id/nav_rekaman_rapat" android:title="@string/menu_rekaman_rapat" android:icon="@drawable/ic_radio_button" />
+        <item android:id="@+id/nav_hasil_transkripsi" android:title="@string/menu_hasil_transkripsi" android:icon="@drawable/ic_docs" />
+        <item android:id="@+id/nav_laporan" android:title="@string/menu_laporan" android:icon="@drawable/ic_insert_chart" />
+    </group>
+</menu>

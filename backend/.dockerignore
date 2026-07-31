@@ -1,0 +1,32 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Development / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Uploaded transient data (persisted via Docker volumes)
+uploads/audio/*
+uploads/laporan/*
+!uploads/audio/.gitkeep
+!uploads/laporan/.gitkeep
+
+# Docker files
+Dockerfile
+.dockerignore

@@ -1,0 +1,33 @@
+# ============================================
+# Root .gitignore for Meeting Assistant Project
+# ============================================
+
+# Backend Environment & Virtualenvs
+backend/venv/
+backend/env/
+backend/ENV/
+backend/.env
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Backend Uploaded Media & Reports (Keep directories with .gitkeep)
+backend/uploads/audio/*
+backend/uploads/laporan/*
+!backend/uploads/audio/.gitkeep
+!backend/uploads/laporan/.gitkeep
+
+# Android Build & IDE files
+MeetingAssistant/.gradle/
+MeetingAssistant/.idea/
+MeetingAssistant/.kotlin/
+MeetingAssistant/build/
+MeetingAssistant/app/build/
+MeetingAssistant/local.properties
+*.iml
+
+# OS & Editor transient files
+.DS_Store
+Thumbs.db
+.vscode/

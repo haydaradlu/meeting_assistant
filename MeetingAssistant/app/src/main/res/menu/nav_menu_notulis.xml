@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/menu_group_notulis" android:checkableBehavior="single">
+        <item android:id="@+id/nav_rekaman_rapat" android:title="@string/menu_rekaman_rapat" android:icon="@drawable/ic_radio_button" />
+        <item android:id="@+id/nav_hasil_transkripsi" android:title="@string/menu_hasil_transkripsi" android:icon="@drawable/ic_docs" />
+        <item android:id="@+id/nav_laporan" android:title="@string/menu_laporan" android:icon="@drawable/ic_insert_chart" />
+    </group>
+</menu>
