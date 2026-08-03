@@ -127,7 +127,7 @@ def _build_laporan_response(laporan, db: Session) -> LaporanResponse:
         pr_id=laporan.pr_id,
         admin_id=laporan.admin_id,
         file_laporan=laporan.file_laporan,
-        tanggal_kirim=laporan.tanggal_kirim,
+        tanggal_kirim=laporan.tanggal_kirim.date() if (laporan.tanggal_kirim and hasattr(laporan.tanggal_kirim, "date")) else laporan.tanggal_kirim,
         created_at=laporan.created_at,
         updated_at=laporan.updated_at,
         pemimpin_rapat_name=pr.name if pr else None,
