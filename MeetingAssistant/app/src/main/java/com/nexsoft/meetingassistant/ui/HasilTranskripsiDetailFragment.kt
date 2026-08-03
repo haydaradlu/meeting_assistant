@@ -215,7 +215,16 @@ class HasilTranskripsiDetailFragment : Fragment() {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Laporan berhasil dikirim", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Gagal mengirim laporan", Toast.LENGTH_SHORT).show()
+                    val errorMsg = try {
+                        val errorBody = response.errorBody()?.string()
+                        if (!errorBody.isNullOrEmpty()) {
+                            val json = org.json.JSONObject(errorBody)
+                            json.optString("detail", "Gagal mengirim laporan (kode: ${response.code()})")
+                        } else "Gagal mengirim laporan (kode: ${response.code()})"
+                    } catch (e: Exception) {
+                        "Gagal mengirim laporan (kode: ${response.code()})"
+                    }
+                    Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show()
                 }
             }
 

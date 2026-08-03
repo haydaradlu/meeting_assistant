@@ -16,6 +16,8 @@ from app.utils.auth import get_current_user
 from app.schemas.auth import TokenData
 
 from datetime import datetime
+import html
+import re
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
@@ -74,15 +76,19 @@ def _generate_pdf_report(report_path: str, hasil: HasilTranskripsi, pr_name: Opt
     story.append(Paragraph("LAPORAN HASIL TRANSKRIPSI RAPAT", title_style))
     story.append(HRFlowable(width="100%", thickness=2, color=colors.HexColor("#1A237E"), spaceBefore=5, spaceAfter=15))
 
-    nama_rapat = hasil.rekaman.nama_rekaman if hasil.rekaman and hasil.rekaman.nama_rekaman else "-"
-    tanggal_str = str(hasil.tanggal) if hasil.tanggal else "-"
+    nama_rapat = html.escape(str(hasil.rekaman.nama_rekaman)) if (hasil.rekaman and hasil.rekaman.nama_rekaman) else "-"
+    tanggal_str = html.escape(str(hasil.tanggal)) if hasil.tanggal else "-"
+    status_val = hasil.status_validasi.value if hasattr(hasil.status_validasi, 'value') else str(hasil.status_validasi)
+    status_str = html.escape(status_val) if hasil.status_validasi else "-"
+    pr_str = html.escape(str(pr_name)) if pr_name else "-"
+    admin_str = html.escape(str(admin_name)) if admin_name else "-"
 
     meta_data = [
         [Paragraph("Nama Rapat", meta_label), Paragraph(f": {nama_rapat}", meta_style)],
         [Paragraph("Tanggal", meta_label), Paragraph(f": {tanggal_str}", meta_style)],
-        [Paragraph("Status Validasi", meta_label), Paragraph(f": {hasil.status_validasi or '-'}", meta_style)],
-        [Paragraph("Pemimpin Rapat", meta_label), Paragraph(f": {pr_name or '-'}", meta_style)],
-        [Paragraph("Admin", meta_label), Paragraph(f": {admin_name or '-'}", meta_style)],
+        [Paragraph("Status Validasi", meta_label), Paragraph(f": {status_str}", meta_style)],
+        [Paragraph("Pemimpin Rapat", meta_label), Paragraph(f": {pr_str}", meta_style)],
+        [Paragraph("Admin", meta_label), Paragraph(f": {admin_str}", meta_style)],
     ]
     t = Table(meta_data, colWidths=[110, 340])
     t.setStyle(TableStyle([
@@ -97,14 +103,14 @@ def _generate_pdf_report(report_path: str, hasil: HasilTranskripsi, pr_name: Opt
     rangkuman_text = hasil.hasil_rangkuman or "Belum ada rangkuman"
     for para in rangkuman_text.split("\n"):
         if para.strip():
-            story.append(Paragraph(para.strip(), body_style))
+            story.append(Paragraph(html.escape(para.strip()), body_style))
     story.append(Spacer(1, 10))
 
     story.append(Paragraph("HASIL TRANSKRIPSI LENGKAP", section_style))
     transkripsi_text = hasil.hasil_transkripsi or "Belum ada transkripsi"
     for para in transkripsi_text.split("\n"):
         if para.strip():
-            story.append(Paragraph(para.strip(), body_style))
+            story.append(Paragraph(html.escape(para.strip()), body_style))
 
     doc.build(story)
 
@@ -181,7 +187,7 @@ def create_laporan(
     # Generate a report filename
     nama_rekaman_safe = "tanpa_nama"
     if hasil.rekaman and hasil.rekaman.nama_rekaman:
-        nama_rekaman_safe = hasil.rekaman.nama_rekaman.replace(" ", "_")
+        nama_rekaman_safe = re.sub(r'[^\w\-_]', '_', str(hasil.rekaman.nama_rekaman))
         
     file_laporan = f"laporan_{nama_rekaman_safe}.pdf"
 

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional
 from datetime import datetime, date
 
@@ -26,6 +26,13 @@ class LaporanResponse(BaseModel):
     pemimpin_rapat_name: Optional[str] = None
     admin_name: Optional[str] = None
     nama_rekaman: Optional[str] = None
+
+    @field_validator("tanggal_kirim", mode="before")
+    @classmethod
+    def convert_datetime_to_date(cls, value):
+        if hasattr(value, "date"):
+            return value.date()
+        return value
 
     class Config:
         from_attributes = True

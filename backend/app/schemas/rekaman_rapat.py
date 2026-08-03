@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional
 from datetime import datetime, date
 
@@ -21,6 +21,13 @@ class RekamanResponse(BaseModel):
     created_by: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+
+    @field_validator("tanggal", mode="before")
+    @classmethod
+    def convert_datetime_to_date(cls, value):
+        if hasattr(value, "date"):
+            return value.date()
+        return value
 
     class Config:
         from_attributes = True
