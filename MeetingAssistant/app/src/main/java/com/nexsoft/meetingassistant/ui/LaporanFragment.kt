@@ -144,7 +144,8 @@ class LaporanFragment : Fragment() {
                     response.body()?.let { body ->
                         try {
                             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                            val fileName = laporan.fileLaporan ?: "laporan_${laporan.laporanId}.pdf"
+                            val rawName = laporan.fileLaporan ?: "laporan_${laporan.laporanId}.pdf"
+                            val fileName = if (rawName.endsWith(".txt", true)) rawName.replace(".txt", ".pdf", true) else rawName
                             val file = File(downloadsDir, fileName)
 
                             val inputStream = body.byteStream()
@@ -161,6 +162,7 @@ class LaporanFragment : Fragment() {
                             inputStream.close()
 
                             Toast.makeText(requireContext(), "Laporan berhasil didownload ke: ${file.absolutePath}", Toast.LENGTH_LONG).show()
+                            showOpenFileDialog(file)
                         } catch (e: Exception) {
                             Toast.makeText(requireContext(), "Gagal menyimpan file: ${e.message}", Toast.LENGTH_SHORT).show()
                         }
@@ -174,6 +176,34 @@ class LaporanFragment : Fragment() {
                 Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun showOpenFileDialog(file: File) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Download Selesai")
+            .setMessage("Laporan berhasil diunduh (${file.name}). Buka file sekarang?")
+            .setPositiveButton("Buka") { _, _ ->
+                try {
+                    val uri = androidx.core.content.FileProvider.getUriForFile(
+                        requireContext(),
+                        "${requireContext().packageName}.fileprovider",
+                        file
+                    )
+                    val mimeType = if (file.name.endsWith(".pdf", true)) "application/pdf" else "text/plain"
+                    val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+                        setDataAndType(uri, mimeType)
+                        addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    startActivity(intent)
+                } catch (e: android.content.ActivityNotFoundException) {
+                    Toast.makeText(requireContext(), "Tidak ada aplikasi untuk membuka file PDF", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "Gagal membuka file: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Tutup", null)
+            .show()
     }
 
     override fun onDestroyView() {

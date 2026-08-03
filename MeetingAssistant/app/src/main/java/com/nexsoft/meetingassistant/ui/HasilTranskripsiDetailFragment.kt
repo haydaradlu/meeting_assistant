@@ -14,6 +14,7 @@ import com.nexsoft.meetingassistant.models.HasilTranskripsi
 import com.nexsoft.meetingassistant.models.Laporan
 import com.nexsoft.meetingassistant.utils.Constants
 import com.nexsoft.meetingassistant.utils.SessionManager
+import com.nexsoft.meetingassistant.utils.toOnlyDate
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -114,7 +115,7 @@ class HasilTranskripsiDetailFragment : Fragment() {
 
     private fun displayHasilDetail(hasil: HasilTranskripsi) {
         binding.tvNamaRekaman.text = hasil.namaRekaman ?: "-"
-        binding.tvTanggal.text = hasil.tanggal ?: "-"
+        binding.tvTanggal.text = hasil.tanggal.toOnlyDate()
         binding.tvId.text = hasil.hasilId?.toString() ?: "-"
         binding.tvNotulis.text = hasil.notulisName ?: "-"
 
@@ -152,8 +153,11 @@ class HasilTranskripsiDetailFragment : Fragment() {
             statusValidasi = selectedStatus
         )
 
+        binding.btnSimpan.isEnabled = false
+
         ApiClient.apiService.validateHasil(hasilId, updatedHasil).enqueue(object : Callback<HasilTranskripsi> {
             override fun onResponse(call: Call<HasilTranskripsi>, response: Response<HasilTranskripsi>) {
+                binding.btnSimpan.isEnabled = true
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Status berhasil diperbarui", Toast.LENGTH_SHORT).show()
                 } else {
@@ -162,6 +166,7 @@ class HasilTranskripsiDetailFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<HasilTranskripsi>, t: Throwable) {
+                binding.btnSimpan.isEnabled = true
                 Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
@@ -203,8 +208,10 @@ class HasilTranskripsiDetailFragment : Fragment() {
             hasilId = hasil.hasilId
         )
 
+        binding.btnKirim.isEnabled = false
         ApiClient.apiService.createLaporan(laporan).enqueue(object : Callback<Laporan> {
             override fun onResponse(call: Call<Laporan>, response: Response<Laporan>) {
+                binding.btnKirim.isEnabled = true
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Laporan berhasil dikirim", Toast.LENGTH_SHORT).show()
                 } else {
@@ -213,6 +220,7 @@ class HasilTranskripsiDetailFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<Laporan>, t: Throwable) {
+                binding.btnKirim.isEnabled = true
                 Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.nexsoft.meetingassistant.databinding.ItemRekamanRowBinding
 import com.nexsoft.meetingassistant.models.RekamanRapat
+import com.nexsoft.meetingassistant.utils.toOnlyDate
 
 class RekamanAdapter(
     private var rekamanList: MutableList<RekamanRapat> = mutableListOf(),
@@ -30,7 +31,7 @@ class RekamanAdapter(
             tvId.text = rekaman.recId?.toString() ?: "-"
             tvNotulis.text = rekaman.notulisName ?: "-"
             tvRekaman.text = rekaman.namaRekaman ?: "-"
-            tvTanggal.text = rekaman.tanggal ?: "-"
+            tvTanggal.text = rekaman.tanggal.toOnlyDate()
 
             // Hide delete button for notulis role
             if (userRole == "notulis") {

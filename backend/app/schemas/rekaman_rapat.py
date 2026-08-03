@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, date
 
 
 class RekamanCreate(BaseModel):
@@ -16,7 +16,7 @@ class RekamanResponse(BaseModel):
     notulis_id: Optional[int] = None
     notulis_name: Optional[str] = None
     file_audio: str
-    tanggal: datetime
+    tanggal: date
     nama_rekaman: str
     created_by: Optional[str] = None
     created_at: Optional[datetime] = None

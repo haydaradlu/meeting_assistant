@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, date
 
 
 class LaporanCreate(BaseModel):
@@ -18,7 +18,7 @@ class LaporanResponse(BaseModel):
     pr_id: Optional[int] = None
     admin_id: Optional[int] = None
     file_laporan: Optional[str] = None
-    tanggal_kirim: Optional[datetime] = None
+    tanggal_kirim: Optional[date] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

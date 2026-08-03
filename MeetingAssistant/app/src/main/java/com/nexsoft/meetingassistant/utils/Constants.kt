@@ -1,7 +1,7 @@
 package com.nexsoft.meetingassistant.utils
 
 object Constants {
-    const val BASE_URL = "http://192.168.87.95:8000/api/"
+    const val BASE_URL = "http://43.157.198.234:8000/api/"
     const val PREF_NAME = "meeting_assistant_prefs"
     const val KEY_TOKEN = "token"
     const val KEY_ROLE = "role"

@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.nexsoft.meetingassistant.databinding.ItemLaporanRowBinding
 import com.nexsoft.meetingassistant.models.Laporan
+import com.nexsoft.meetingassistant.utils.toOnlyDate
 
 class LaporanAdapter(
     private var laporanList: MutableList<Laporan> = mutableListOf(),
@@ -29,7 +30,7 @@ class LaporanAdapter(
             tvNo.text = (position + 1).toString()
             tvLaporan.text = laporan.fileLaporan ?: "-"
             tvId.text = laporan.laporanId?.toString() ?: "-"
-            tvTanggal.text = laporan.tanggalKirim ?: "-"
+            tvTanggal.text = laporan.tanggalKirim.toOnlyDate()
             
             if (userRole == com.nexsoft.meetingassistant.utils.Constants.ROLE_NOTULIS) {
                 btnDelete.visibility = android.view.View.GONE

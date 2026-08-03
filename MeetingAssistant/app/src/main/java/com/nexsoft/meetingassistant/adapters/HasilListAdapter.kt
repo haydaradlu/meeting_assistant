@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.nexsoft.meetingassistant.databinding.ItemHasilRowBinding
 import com.nexsoft.meetingassistant.models.HasilTranskripsi
+import com.nexsoft.meetingassistant.utils.toOnlyDate
 
 class HasilListAdapter(
     private var hasilList: MutableList<HasilTranskripsi> = mutableListOf(),
@@ -27,7 +28,7 @@ class HasilListAdapter(
             tvNo.text = (position + 1).toString()
             tvNamaRekaman.text = hasil.namaRekaman ?: "-"
             tvId.text = hasil.hasilId?.toString() ?: "-"
-            tvTanggal.text = hasil.tanggal ?: "-"
+            tvTanggal.text = hasil.tanggal.toOnlyDate()
             btnView.setOnClickListener { onView(hasil) }
         }
     }

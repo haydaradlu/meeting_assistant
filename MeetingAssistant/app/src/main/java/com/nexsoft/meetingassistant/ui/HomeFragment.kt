@@ -14,6 +14,7 @@ import com.nexsoft.meetingassistant.models.Laporan
 import com.nexsoft.meetingassistant.models.RekamanRapat
 import com.nexsoft.meetingassistant.utils.Constants
 import com.nexsoft.meetingassistant.utils.SessionManager
+import com.nexsoft.meetingassistant.utils.toOnlyDate
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -143,7 +144,7 @@ class HomeFragment : Fragment() {
                     val items = recent.map {
                         Pair(
                             "Laporan #${it.laporanId}",
-                            "File: ${it.fileLaporan ?: "-"}  •  ${it.tanggalKirim ?: "-"}"
+                            "File: ${it.fileLaporan ?: "-"}  •  ${it.tanggalKirim.toOnlyDate()}"
                         )
                     }
                     recentAdapter.updateData(items)
@@ -193,7 +194,7 @@ class HomeFragment : Fragment() {
                     val items = recent.map {
                         Pair(
                             it.namaRekaman ?: "Rekaman #${it.recId}",
-                            "Status: ${it.statusValidasi ?: "pending"}  •  ${it.tanggal ?: "-"}"
+                            "Status: ${it.statusValidasi ?: "pending"}  •  ${it.tanggal.toOnlyDate()}"
                         )
                     }
                     recentAdapter.updateData(items)
@@ -241,7 +242,7 @@ class HomeFragment : Fragment() {
                     val items = recent.map {
                         Pair(
                             it.namaRekaman ?: "Rekaman #${it.recId}",
-                            "Tanggal: ${it.tanggal ?: "-"}"
+                            "Tanggal: ${it.tanggal.toOnlyDate()}"
                         )
                     }
                     recentAdapter.updateData(items)

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, date
 
 
 class HasilCreate(BaseModel):
@@ -33,7 +33,7 @@ class HasilResponse(BaseModel):
     hasil_transkripsi: Optional[str] = None
     hasil_rangkuman: Optional[str] = None
     summary_percentage: Optional[int] = 60
-    tanggal: Optional[datetime] = None
+    tanggal: Optional[date] = None
     status_validasi: Optional[str] = "pending"
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

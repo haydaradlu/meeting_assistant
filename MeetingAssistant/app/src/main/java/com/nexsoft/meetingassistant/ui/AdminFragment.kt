@@ -119,9 +119,12 @@ class AdminFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            btnTambah.isEnabled = false
+
             val admin = Admin(username = username, password = password, name = nama)
             ApiClient.apiService.createAdmin(admin).enqueue(object : Callback<Admin> {
                 override fun onResponse(call: Call<Admin>, response: Response<Admin>) {
+                    btnTambah.isEnabled = true
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Admin berhasil ditambahkan", Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
@@ -132,6 +135,7 @@ class AdminFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<Admin>, t: Throwable) {
+                    btnTambah.isEnabled = true
                     Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
@@ -173,6 +177,8 @@ class AdminFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            btnTambah.isEnabled = false
+
             val updatedAdmin = Admin(
                 adminId = admin.adminId,
                 username = username,
@@ -182,6 +188,7 @@ class AdminFragment : Fragment() {
 
             ApiClient.apiService.updateAdmin(admin.adminId!!, updatedAdmin).enqueue(object : Callback<Admin> {
                 override fun onResponse(call: Call<Admin>, response: Response<Admin>) {
+                    btnTambah.isEnabled = true
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Admin berhasil diperbarui", Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
@@ -192,6 +199,7 @@ class AdminFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<Admin>, t: Throwable) {
+                    btnTambah.isEnabled = true
                     Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })

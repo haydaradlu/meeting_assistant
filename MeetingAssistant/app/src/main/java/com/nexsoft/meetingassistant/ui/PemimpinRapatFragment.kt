@@ -120,9 +120,12 @@ class PemimpinRapatFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            btnTambah.isEnabled = false
+
             val pr = PemimpinRapat(username = username, password = password, name = nama)
             ApiClient.apiService.createPemimpinRapat(pr).enqueue(object : Callback<PemimpinRapat> {
                 override fun onResponse(call: Call<PemimpinRapat>, response: Response<PemimpinRapat>) {
+                    btnTambah.isEnabled = true
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Pemimpin Rapat berhasil ditambahkan", Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
@@ -133,6 +136,7 @@ class PemimpinRapatFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<PemimpinRapat>, t: Throwable) {
+                    btnTambah.isEnabled = true
                     Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
@@ -174,6 +178,8 @@ class PemimpinRapatFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            btnTambah.isEnabled = false
+
             val updatedPr = PemimpinRapat(
                 prId = pr.prId,
                 username = username,
@@ -183,6 +189,7 @@ class PemimpinRapatFragment : Fragment() {
 
             ApiClient.apiService.updatePemimpinRapat(pr.prId!!, updatedPr).enqueue(object : Callback<PemimpinRapat> {
                 override fun onResponse(call: Call<PemimpinRapat>, response: Response<PemimpinRapat>) {
+                    btnTambah.isEnabled = true
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Pemimpin Rapat berhasil diperbarui", Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
@@ -193,6 +200,7 @@ class PemimpinRapatFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<PemimpinRapat>, t: Throwable) {
+                    btnTambah.isEnabled = true
                     Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })

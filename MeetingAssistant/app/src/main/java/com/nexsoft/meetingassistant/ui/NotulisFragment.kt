@@ -120,9 +120,12 @@ class NotulisFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            btnTambah.isEnabled = false
+
             val notulis = Notulis(username = username, password = password, name = nama)
             ApiClient.apiService.createNotulis(notulis).enqueue(object : Callback<Notulis> {
                 override fun onResponse(call: Call<Notulis>, response: Response<Notulis>) {
+                    btnTambah.isEnabled = true
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Notulis berhasil ditambahkan", Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
@@ -133,6 +136,7 @@ class NotulisFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<Notulis>, t: Throwable) {
+                    btnTambah.isEnabled = true
                     Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
@@ -174,6 +178,8 @@ class NotulisFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            btnTambah.isEnabled = false
+
             val updatedNotulis = Notulis(
                 notulisId = notulis.notulisId,
                 username = username,
@@ -183,6 +189,7 @@ class NotulisFragment : Fragment() {
 
             ApiClient.apiService.updateNotulis(notulis.notulisId!!, updatedNotulis).enqueue(object : Callback<Notulis> {
                 override fun onResponse(call: Call<Notulis>, response: Response<Notulis>) {
+                    btnTambah.isEnabled = true
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Notulis berhasil diperbarui", Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
@@ -193,6 +200,7 @@ class NotulisFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<Notulis>, t: Throwable) {
+                    btnTambah.isEnabled = true
                     Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
